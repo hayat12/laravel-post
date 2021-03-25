@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Helper as AppHelper;
 use Illuminate\Http\Request;
-// use App\Helper;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Comment;
 class CommentController extends Controller
 {
@@ -28,6 +28,17 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $helper = new AppHelper();
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required',
+            'user_id' => 'required',
+            'post_id' => 'required'
+        ]);
+         
+        if ($validator->fails()) {
+             return $helper->notFoundResponse("form validation error");
+        }
+
         $comment = Comment::create($request->all());
         return $helper->foundResponse($comment);
     }
@@ -59,10 +70,19 @@ class CommentController extends Controller
     {
         $comment = Comment::find($id);
         $helper = new AppHelper();
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required'
+        ]);
+        if ($validator->fails()) {
+             return $helper->notFoundResponse("form validation error");
+        }
+
         if (!$comment) {
             return $helper->notFoundResponse("Comment Not found");
         }
-        $comment->update($request->all());
+        $comment->content = $request->content;
+        $comment->update();
         return $helper->foundResponse($comment);
     }
 

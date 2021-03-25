@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper as AppHelper;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     /**
@@ -29,6 +30,15 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $helper = new AppHelper();
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'user_id' => 'required'
+        ]);
+         
+        if ($validator->fails()) {
+             return $helper->notFoundResponse("form validation error");
+        }
+
         $post = Post::create($request->all());
         return $helper->foundResponse($post);
     }
