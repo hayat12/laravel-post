@@ -16,7 +16,7 @@ class PostController extends Controller
     {
         $pageLimit = 3;
         $helper = new AppHelper();
-        $post = Post::paginate(2);
+        $post = Post::paginate($pageLimit);
         return $helper->foundResponse($post);
     }
 
