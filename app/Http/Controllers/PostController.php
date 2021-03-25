@@ -44,7 +44,7 @@ class PostController extends Controller
         $helper = new AppHelper();
         $post=Post::find($id);
         if (!$post) {
-            return $helper->notFoundResponse("No fount");
+            return $helper->notFoundResponse("User not fount");
         }
         return $helper->foundResponse($post);
     }
@@ -60,6 +60,9 @@ class PostController extends Controller
     {
         $helper = new AppHelper();
         $post = Post::find($id);
+        if (!$post) {
+            return $helper->notFoundResponse("User id ".$id." not found");
+        }
         $post->update($request->all());
         return $helper->foundResponse($post);
     }
@@ -74,6 +77,10 @@ class PostController extends Controller
     {
         $helper = new AppHelper();
         $post = Post::destroy($id);
+        $post = Post::find($id);
+        if (!$post) {
+            return $helper->notFoundResponse("Invalid userid ".$id);
+        }
         return $helper->foundResponse($post);
     }
 }

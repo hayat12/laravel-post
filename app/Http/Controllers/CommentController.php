@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Helper as AppHelper;
 use Illuminate\Http\Request;
 // use App\Helper;
 use App\Models\Comment;
@@ -13,7 +14,9 @@ class CommentController extends Controller
      */
     public function index()
     {
-        return Comment::all();
+        $helper = new AppHelper();
+        $comment = Comment::all();
+        return $helper->foundResponse($comment);
     }
 
     /**
@@ -24,7 +27,9 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-       return Comment::create($request->all());
+        $helper = new AppHelper();
+        $comment = Comment::create($request->all());
+        return $helper->foundResponse($comment);
     }
 
     /**
@@ -35,9 +40,12 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        //$helper = new Helper();
-        // return Comment::find($id);
-        return; //$helper->notFoundResponse();
+        $helper = new AppHelper();
+        $comment = Comment::find($id);
+        if (!$comment) {
+            return $helper->notFoundResponse("Comment Not found");
+        }
+        return $helper->foundResponse($comment);
     }
 
     /**
@@ -49,8 +57,13 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Comment::find($id);
-        $post->update($request->all());
+        $comment = Comment::find($id);
+        $helper = new AppHelper();
+        if (!$comment) {
+            return $helper->notFoundResponse("Comment Not found");
+        }
+        $comment->update($request->all());
+        return $helper->foundResponse($comment);
     }
 
     /**
@@ -61,6 +74,11 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        return Comment::destroy($id);
+        $helper = new AppHelper();
+        $comment = Comment::destroy($id);
+        if (!$comment) {
+            return $helper->notFoundResponse("Comment Not found");
+        }
+        return $comment;
     }
 }
